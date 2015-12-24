@@ -1,4 +1,4 @@
-#PHILLIPS PCF8574 I2C LCD44780 Module
+#PHILLIPS PCF8574 I2C LCD44780 ESP8266 NodeMCU Module
 ####Quick start:
 ```lua
 lcd = require("lcd_pcf8574")
@@ -7,6 +7,14 @@ lcd = require("lcd_pcf8574")
 lcd.begin(1, 2, 16, 2)
 lcd.print("Hello, world!")
 ```
+
+####Details:
+It uses 4-bit connection with display, wiring as follow:
+
+P7 | P6 | P5 | P4 | P3 | P2 | P1 | P0
+---|----|----|----|----|----|----|---
+D7 | D6 | D5 | D4 | (BL) | EN | RW | RS
+
 ####Available methods:
 #####.begin(pinSDA, pinSCL, cols, rows, address)
 Initalize display first
