@@ -6,10 +6,11 @@ lcd = require("lcd_pcf8574")
 -- and tell the library the display is 16x2 characters big (this is by default, so you can omit them).
 lcd.begin(1, 2, 16, 2)
 lcd.print("Hello, world!")
+function notice() lcd.scroll(1, "This is the scrolling line. NodeMCU heap:" .. node.heap(), 1, 150, notice) end; notice()
 ```
 
 ####Details:
-It uses 4-bit connection with display, wiring as follow:
+I use 4-bit connection with display, wiring as follow:
 
 P7 | P6 | P5 | P4 | P3 | P2 | P1 | P0
 ---|----|----|----|----|----|----|---
@@ -41,8 +42,19 @@ Name | Description | Default value
 ---- | ----------- | -------------
 _string_ | string to write | __required__
 
+#####.scroll(row, string, timer, delay, callback)
+Writes a string to LCD and scrolls it right to left, then calls optional callback.
+
+Name | Description | Default value
+---- | ----------- | -------------
+_row_ | row to write on | __required__
+_string_ | string to write | __required__
+_timer_ | timer ID (0-6) | __required__
+_delay_ | delay between shifting | __required__
+_callback_ | function to call, after one scroll is over | another scroll begins
+
 #####.setCursor(col, row)
-Positions cursor to selected column and row
+Position cursor to selected column and row
 
 Name | Description | Default value
 ---- | ----------- | -------------
@@ -57,4 +69,4 @@ Name | Description | Default value
 _on_ | 0 or 1 to turn off and on respectively | 1
 
 #####.clear()
-Clears the LCD
+Clear LCD

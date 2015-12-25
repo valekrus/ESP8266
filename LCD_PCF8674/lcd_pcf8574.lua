@@ -5,7 +5,7 @@ _G[moduleName] = M
 
 -- Constants.
 local address = 0x27
-local lines = 16
+local cols = 16
 local rows = 2
 
 -- Default value for i2c communication.
@@ -63,9 +63,9 @@ local function sendLcd(data, rs)
     sendLcdRaw(bit.lshift(bit.band(data, 0x0f), 4), rs)  -- low nibble
 end
 
-function M.begin(pinSDA, pinSCL, lcdRows, lcdLines, addr)
+function M.begin(pinSDA, pinSCL, lcdColumns, lcdRows, addr)
     address = addr or address
-    lines = lcdLines or lines
+    cols = lcdColumns or cols
     rows = lcdRows or rows
 
     i2c.setup(id, pinSDA, pinSCL, speed)
@@ -129,6 +129,35 @@ end
 
 function M.clear()
     sendLcd(0x01, 0)
+end
+
+function M.define(index, bytes)
+    sendLcd(0x40 + 8 * bit.band(index, 0x07), 0)
+    for i = 1, #bytes do
+        sendLcd(bytes[i], 1)
+    end
+end
+
+function M.scroll(row, s, timer, _delay, callback)
+    _delay = _delay or 40
+    tmr.stop(timer)
+    local i = cols
+    local runner = function()
+        M.setCursor(i >= 0 and i or 0, row)
+        M.print(i >= 0 and s:sub(1, cols - i) or s:sub(1 - i, cols - i))
+        M.print(" ")
+        if i == -#s then
+            if type(callback) == "function" then
+                tmr.stop(timer)
+                callback()
+            else
+                i = cols
+            end
+        else
+            i = i - 1
+        end
+    end
+    tmr.alarm(timer, _delay, 1, runner)
 end
 
 return M
